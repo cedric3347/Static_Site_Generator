@@ -51,3 +51,24 @@ class LeafNode(HTMLNode):
         html += f">{self.value}</{self.tag}>"
         
         return html
+
+
+class ParentNode(HTMLNode):
+    def __init__(self, tag, children, props=None):
+        super().__init__(tag, None, children, props)
+
+    def to_html(self):
+        if self.tag == None:
+            raise ValueError("Tag Missing")
+        
+        if self.children == None or self.children == []:
+            raise ValueError("Children Missing")
+
+        children_html_list = []
+
+        for child in self.children:
+            children_html_list.append(child.to_html())
+        
+        children_html = "".join(children_html_list)
+
+        return f'<{self.tag}>{children_html}</{self.tag}>'
