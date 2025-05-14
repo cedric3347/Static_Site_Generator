@@ -1,6 +1,6 @@
 import unittest
 
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -61,6 +61,31 @@ class TestHTMLNode(unittest.TestCase):
         self.assertIn("children=None", repr_str)
         self.assertIn("props={'class': 'greeting'}", repr_str)
 
+    def test_leaf_to_html_p(self):
+        # test leafNode conversions 
+        node = LeafNode("p", "Hello, world!")
+        self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
+
+    def test_leaf_to_html_a_with_href(self):
+        # test link tag 
+        node = LeafNode("a", "Click me!", {"href": "https://www.google.com"})
+        self.assertEqual(node.to_html(), '<a href="https://www.google.com">Click me!</a>')    
+
+    def test_leaf_to_html_no_tag(self):
+        # test None case
+        node = LeafNode(None, "Just some text")
+        self.assertEqual(node.to_html(), "Just some text")
+
+    def test_leaf_to_html_no_value(self):
+        # test ValueError
+        node = LeafNode("p", None)
+        with self.assertRaises(ValueError):
+            node.to_html()    
+    
+    def test_leaf_to_html_multiple_props(self):
+        # test multiple properties
+        node = LeafNode("input", "", {"type": "text", "id": "username", "name": "username"})
+        self.assertEqual(node.to_html(), '<input type="text" id="username" name="username"></input>')
 
 if __name__== "__main__":
     unittest.main()
