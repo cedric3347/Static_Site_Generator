@@ -1,5 +1,5 @@
 import unittest
-from markdown_inline import split_nodes_delimiter, split_nodes_image, split_nodes_link
+from markdown_inline import split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes
 from textnode import TextNode, TextType
 from extract import extract_markdown_images, extract_markdown_links
 
@@ -240,6 +240,38 @@ class TestInlineMarkdown(unittest.TestCase):
             ],
             new_nodes
         )
+
+
+# test for text_to_textnodes(text) function
+
+    def test_text_to_textnodes_simple(self):
+        text = "Just plain text"
+        nodes = text_to_textnodes(text)
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(nodes[0].text, "Just plain text")
+        self.assertEqual(nodes[0].text_type, TextType.TEXT)
+
+    def test_text_to_textnodes_with_formatting(self):
+        text = "Text with **bold** and _italic_"
+        nodes = text_to_textnodes(text)
+        self.assertEqual(len(nodes), 4)
+        
+
+    def test_text_to_textnodes_with_links_and_images(self):
+        # Test with the example from the assignment
+        text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        nodes = text_to_textnodes(text)
+        self.assertEqual(len(nodes), 10)
+
+
+    def test_unmatched_delimiters(self):
+        text = "This has **bold but no closing delimiter"
+        with self.assertRaises(ValueError):
+            text_to_textnodes(text)
+    
+    def test_urls_with_special_chars(self):
+        text = "[Link](https://example.com?param=value&another=test)"
+        nodes = text_to_textnodes(text)
 
 
 if __name__ == "__main__":
